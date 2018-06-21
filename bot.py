@@ -4,50 +4,75 @@ import re
 import requests
 import binascii
 import string
+import random
 from bs4 import BeautifulSoup
+
+reddit = None
+subreddit = None
+replied = []
 
 
 def main():
-    #setup()
-    #find_post()
+    init()
+    find_posts()
     find_recipe("i am testing a new profg")
     # TODO post_recipe()
     #finish()
 
 
-def setup():
+def init():
+    global reddit
+    global replied
+    global subreddit
+
     # Create an instance of Reddit
     reddit = praw.Reddit('recipebot')
 
     # If the file replied.txt exists then load it into
     # the replied list. If it does not exist, initialize
     # replied as an empty list.
-    if not os.path.isfile("replied.txt"):
-        replied = []
-    else:
-        with open(replied.txt) as f:
+    if os.path.isfile("replied.txt"):
+        with open("replied.txt") as f:
             replied = f.read()
             replied = replied.split("\n")
             replied = list(filter(None, replied))
 
     # Open the appropriate subreddit.
-    subreddit = reddit.subreddit("pythonforengineers")
+    subreddit = reddit.subreddit("food")
 
 
-def find_post():
-    # Search the first five hot posts in the subreddit.
-    # If the title contains "i love python", reply to
-    # the post.
-    for submission in subreddit.hot(limit=5):
-        if submission.id not in replied:
-            if re.search("i love python", submission.title, re.IGNORECASE):
-                submission.reply("Botty McBotface was here.")
-                replied.append(submission.id)
+def find_posts():
+    global subreddit
+    global replied
+    global targets
+
+    posts = []
+
+    # Search the first 10 hot posts in the subreddit.
+    for submission in subreddit.hot(limit=10):
+        # Save the posts that contain images
+        if submission.id not in replied and ("imgur.com/" in submission.url or "i.redd" in submission.url):
+            posts.append(submission)
+    if len(posts) >= 3:
+        # Randomly select two of the image posts
+        target = random.choice(posts)
+        replied.append(target)
+    query = target.title.lower()
+
+    filler = open('filler.txt', 'r')
+    for phrase in filler.readlines():
+        phrase = phrase.strip('\n')
+        if phrase in query:
+            query = query.replace(phrase, '')
+    query = query + " recipe -reddit"
+    print(query)
+    print("--------")
+    find_recipe(query)
 
 
-def find_recipe(post):
-    query = "https://www.google.com/search?q=" + post + "&num=5&hl=en"
-    r = requests.get(query)
+def find_recipe(query):
+    search_URL = "https://www.google.com/search?q=" + query + "&num=5&hl=en"
+    r = requests.get(search_URL)
 
     soup = BeautifulSoup(r.text, 'html.parser')
     for result in soup.find_all(class_='g'):
@@ -74,7 +99,7 @@ def find_recipe(post):
                         link = re.sub("%" + hex, ascii.decode("utf-8"), link)
                         offset += 2
                 print(link)
-                print('------')
+                #print('------')
 
 
 
