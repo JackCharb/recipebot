@@ -9,15 +9,17 @@ from bs4 import BeautifulSoup
 
 reddit = None
 subreddit = None
+target = None
 replied = []
 
 
 def main():
     init()
-    find_posts()
-    find_recipe("i am testing a new profg")
-    # TODO post_recipe()
-    #finish()
+    query = find_posts()
+    link = find_recipe(query)
+
+    post_recipe(link)
+    finish()
 
 
 def init():
@@ -36,6 +38,7 @@ def init():
             replied = f.read()
             replied = replied.split("\n")
             replied = list(filter(None, replied))
+        f.close()
 
     # Open the appropriate subreddit.
     subreddit = reddit.subreddit("food")
@@ -44,30 +47,30 @@ def init():
 def find_posts():
     global subreddit
     global replied
-    global targets
+    global target
 
     posts = []
 
     # Search the first 10 hot posts in the subreddit.
     for submission in subreddit.hot(limit=10):
-        # Save the posts that contain images
+        # Save the posts that contain images and haven't already been used
         if submission.id not in replied and ("imgur.com/" in submission.url or "i.redd" in submission.url):
             posts.append(submission)
     if len(posts) >= 3:
-        # Randomly select two of the image posts
+        # Randomly select an image posts
         target = random.choice(posts)
-        replied.append(target)
+    else:
+        quit()
     query = target.title.lower()
 
     filler = open('filler.txt', 'r')
     for phrase in filler.readlines():
         phrase = phrase.strip('\n')
         if phrase in query:
-            query = query.replace(phrase, '')
+            query = query.replace(phrase, ' ')
     query = query + " recipe -reddit"
     print(query)
-    print("--------")
-    find_recipe(query)
+    return query
 
 
 def find_recipe(query):
@@ -98,20 +101,27 @@ def find_recipe(query):
                         ascii = binascii.unhexlify(hex)
                         link = re.sub("%" + hex, ascii.decode("utf-8"), link)
                         offset += 2
-                print(link)
-                #print('------')
+        link_res = requests.get(link)
+        if (link_res.status_code == 200):
+            return link
+    quit()
 
 
-
-
-# def post_recipe():
+def post_recipe(link):
+    # global target
+    target.reply("If you like the look of this food, perhaps you may " +
+                 "enjoy this recipe.\n\n" + link + "\n\n*I am a bot, and " +
+                 "this action was performed automatically. Please contact " +
+                 "my creator or the moderators of this subreddit if you " +
+                 "have any questions or concerns.*")
 
 
 def finish():
+    global target
     # Store the list of replied posts into the replied.txt file
-    with open("replied.txt", "w") as f:
-        for id in replied:
-            f.write(id + "\n")
+    with open("replied.txt", "a") as f:
+            f.write(target.id + "\n")
+    f.close()
 
 if __name__ == '__main__':
     main()
