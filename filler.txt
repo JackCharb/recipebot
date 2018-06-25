@@ -2,6 +2,8 @@
 &
 .
 -
+"
+,
 [i ate]
 [homemade]
 [pro/chef]
@@ -41,5 +43,38 @@
  over 
  made 
  home 
+ homemade 
  bed 
  served 
+ from 
+ diner 
+ market 
+ breakfast 
+ dinner 
+ supper 
+ lunch 
+ brunch 
+ desert 
+ mom 
+ dad 
+ husband 
+ wife 
+ cook 
+ first 
+ ate 
+ wow 
+ not 
+ fresh 
+ off 
+ out 
+ on 
+ traditional 
+ traditionally 
+ my 
+ topped 
+ these 
+ those 
+ this 
+ that 
+ are 
+ side 
