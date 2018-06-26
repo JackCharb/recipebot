@@ -66,7 +66,7 @@ def find_posts():
                     "i.redd" in submission.url)
         is_simple = (submission.title.count(',') < 2)
         # Save the posts that contain images and haven't already been used.
-        if submission.id not in replied and is_image:
+        if submission.id not in replied and is_image and is_simple:
             posts.append(submission)
     if len(posts) >= 3:
         # Randomly select one of the valid image posts.
