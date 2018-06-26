@@ -61,7 +61,7 @@ def find_posts():
     posts = []
 
     # Search the first 10 hot posts in the subreddit.
-    for submission in subreddit.hot(limit=20):
+    for submission in subreddit.new(limit=10):
         is_image = ("imgur.com/" in submission.url or
                     "i.redd" in submission.url)
         is_simple = (submission.title.count(',') < 2)
