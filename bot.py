@@ -91,7 +91,11 @@ def find_recipe(query):
     """
 
     search_URL = "https://www.google.com/search?q=" + query + "&num=5&hl=en"
-    r = requests.get(search_URL)
+    try:
+        r = requests.get(search_URL)
+    except:
+        print("Could not reach Google.")
+        quit()
 
     soup = BeautifulSoup(r.text, 'html.parser')
     for result in soup.find_all(class_='g'):
@@ -113,7 +117,9 @@ def find_recipe(query):
                 offset = 0
                 # Fix hex encoded special characters.
                 for i, char in enumerate(link):
-                    if char is '%' and link[i + 1 - offset] in valid and link[i + 2 - offset] in valid:
+
+                    if (char is '%' and (link[i + 1 - offset] in valid and
+                                         link[i + 2 - offset] in valid)):
                         hex = link[i + 1 - offset] + link[i + 2 - offset]
                         ascii = binascii.unhexlify(hex)
                         link = link.replace("%" + hex, ascii.decode("utf-8"))
@@ -123,19 +129,20 @@ def find_recipe(query):
             if (link_res.status_code == 200):
                 return link
         except:
-            print("Bad url encontered")
+            print("Bad URL encontered. Trying next option")
     quit()
 
 
 def post_recipe(link):
     """Post a comment containing the link as a response to the target post."""
-    
+
     global target
     target.reply("If you like the look of this food, perhaps you may " +
                  "enjoy this recipe.\n\n" + link + "\n\n*I am a bot, and " +
                  "this action was performed automatically. Please contact " +
                  "my creator or the moderators of this subreddit if you " +
                  "have any questions or concerns.*")
+    print("Recipe Posted.")
 
 
 def finish():
