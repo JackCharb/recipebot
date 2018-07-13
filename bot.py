@@ -35,7 +35,7 @@ def init():
     reddit = praw.Reddit('recipebot')
 
     # Open the appropriate subreddit.
-    subreddit = reddit.subreddit("food")
+    subreddit = reddit.subreddit("foodporn")
 
     # If the file replied.txt exists then load it into
     # replied[].  If it does not exist, initialize
