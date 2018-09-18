@@ -9,6 +9,3 @@ The subreddit [/r/food](https://www.reddit.com/r/food/) is commonly used for sha
 - Praw: Used for creating an instance of Reddit, accessing subreddits, reading posts, and posting replies.
 - Requests: Used for submitting a Google search query and obtaining Google's response.
 - Beautiful Soup: Used for parsing Google search results, accessing individual results and parsing the URL associated with each result.
-
-#### See it in Action
-The results of this script can be view through the post history of [/u/jlcharbonneau](https://www.reddit.com/user/jlcharbonneau) on Reddit.
